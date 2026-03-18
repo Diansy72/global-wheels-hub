@@ -65,18 +65,19 @@ export default function DashboardHome() {
       <div className="rounded-2xl p-6" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", boxShadow: "var(--shadow-sm)" }}>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="font-sora font-bold text-lg" style={{ color: "hsl(var(--foreground))" }}>Traffic & Bookings</h3>
-            <p className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>Overview statistics</p>
+            <h3 className="font-sora font-bold text-lg" style={{ color: "hsl(var(--foreground))" }}>Performance Overview</h3>
+            <p className="text-sm" style={{ color: "hsl(var(--secondary))" }}>Web clicks & booking trends</p>
           </div>
           <div className="flex rounded-xl overflow-hidden" style={{ border: "1px solid hsl(var(--border))" }}>
             {(["weekly", "monthly"] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className="px-4 py-2 text-xs font-semibold capitalize transition-all"
+                className="px-5 py-2 text-xs font-semibold capitalize transition-all"
                 style={{
-                  background: period === p ? "var(--gradient-primary)" : "transparent",
+                  background: period === p ? "hsl(var(--secondary))" : "transparent",
                   color: period === p ? "white" : "hsl(var(--muted-foreground))",
+                  borderRadius: period === p ? "0.625rem" : "0",
                 }}
               >
                 {p}
@@ -85,55 +86,30 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {/* Bars - Clicks */}
-        <div className="mb-2">
-          <p className="text-xs font-semibold mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>Web Clicks</p>
-          <div className="flex items-end gap-3 h-32">
-            {data.map((d) => (
-              <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full flex items-end justify-center" style={{ height: "100px" }}>
-                  <div
-                    className="w-full max-w-10 rounded-t-lg transition-all duration-500"
-                    style={{ height: `${(d.clicks / maxClicks) * 100}px`, background: "var(--gradient-primary)", minHeight: "4px" }}
-                  />
-                </div>
-                <span className="text-[10px] font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>{d.label}</span>
-                <span className="text-[10px] font-bold" style={{ color: "hsl(var(--foreground))" }}>{d.clicks.toLocaleString()}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bars - Bookings */}
-        <div className="mt-6 pt-6" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <p className="text-xs font-semibold mb-2" style={{ color: "hsl(var(--muted-foreground))" }}>Active Bookings</p>
-          <div className="flex items-end gap-3 h-24">
-            {data.map((d) => (
-              <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full flex items-end justify-center" style={{ height: "70px" }}>
-                  <div
-                    className="w-full max-w-10 rounded-t-lg transition-all duration-500"
-                    style={{ height: `${(d.bookings / maxBookings) * 70}px`, background: "var(--gradient-gold)", minHeight: "4px" }}
-                  />
-                </div>
-                <span className="text-[10px] font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>{d.label}</span>
-                <span className="text-[10px] font-bold" style={{ color: "hsl(var(--foreground))" }}>{d.bookings}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="flex gap-6 mt-4 pt-4" style={{ borderTop: "1px solid hsl(var(--border))" }}>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ background: "hsl(var(--secondary))" }} />
-            <span className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>Web Clicks</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full" style={{ background: "hsl(var(--gold))" }} />
-            <span className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>Bookings</span>
-          </div>
-        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+            <YAxis yAxisId="left" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+            <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+            <Tooltip
+              contentStyle={{
+                background: "hsl(var(--card))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "0.75rem",
+                boxShadow: "var(--shadow-sm)",
+                fontSize: "12px",
+              }}
+            />
+            <Legend
+              verticalAlign="bottom"
+              iconType="circle"
+              formatter={(value) => <span style={{ color: "hsl(var(--muted-foreground))", fontSize: "12px", marginLeft: "4px" }}>{value}</span>}
+            />
+            <Line yAxisId="left" type="monotone" dataKey="clicks" name="Web Clicks" stroke="hsl(var(--secondary))" strokeWidth={2.5} dot={{ r: 4, fill: "white", stroke: "hsl(var(--secondary))", strokeWidth: 2 }} activeDot={{ r: 6 }} />
+            <Line yAxisId="right" type="monotone" dataKey="bookings" name="Bookings" stroke="hsl(var(--gold))" strokeWidth={2.5} dot={{ r: 4, fill: "white", stroke: "hsl(var(--gold))", strokeWidth: 2 }} activeDot={{ r: 6 }} />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Recent Bookings */}
