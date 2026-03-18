@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useAdmin } from "@/stores/adminStore";
-import { MousePointerClick, CalendarCheck, Car, TrendingUp } from "lucide-react";
+import { MousePointerClick, CalendarCheck, Car } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const weeklyData = [
-  { label: "Mon", clicks: 320, bookings: 2 },
-  { label: "Tue", clicks: 480, bookings: 3 },
-  { label: "Wed", clicks: 390, bookings: 1 },
-  { label: "Thu", clicks: 520, bookings: 4 },
-  { label: "Fri", clicks: 680, bookings: 5 },
-  { label: "Sat", clicks: 750, bookings: 6 },
-  { label: "Sun", clicks: 610, bookings: 3 },
+  { label: "Mon", clicks: 3200, bookings: 5 },
+  { label: "Tue", clicks: 4000, bookings: 8 },
+  { label: "Wed", clicks: 3800, bookings: 6 },
+  { label: "Thu", clicks: 5200, bookings: 12 },
+  { label: "Fri", clicks: 4800, bookings: 10 },
+  { label: "Sat", clicks: 6000, bookings: 15 },
+  { label: "Sun", clicks: 5500, bookings: 11 },
 ];
 
 const monthlyData = [
